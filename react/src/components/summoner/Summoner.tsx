@@ -10,10 +10,12 @@ import SummonerNotFound from './SummonerNotFound'
 import ReactTooltip from 'react-tooltip'
 import OverviewSelection from './OverviewSelection'
 import numeral from 'numeral'
-import MatchFilter from './MatchFilter'
 import api from '../../api/api'
 import Modal from 'react-modal'
 import MatchCardModal from './MatchCardModal'
+import { MatchFilterForm } from './MatchFilterForm'
+import type { MatchFilterFormType } from './MatchFilterForm'
+import { VICTORY_COLOR, LOSS_COLOR } from '../../constants/general'
 import {OftenPlaysWith} from './OftenPlaysWith'
 
 import type {BasicMatchType, SummonerType} from '../../types'
@@ -31,12 +33,8 @@ export let MODALSTYLE = {
   },
 }
 
-const victory_color = '#68b568'
-const loss_color = '#c33c3c'
-const neutral_color = 'lightblue'
-
 export function Summoner({route, region, store}: {route: any; region: string; store: any}) {
-  const [matchFilters, setMatchFilters] = useState<any>({})
+  const [matchFilters, setMatchFilters] = useState<MatchFilterFormType>()
   const [lastRefresh, setLastRefresh] = useState<undefined | number>()
   const [isSpectateModalOpen, setIsSpectateModalOpen] = useState(false)
   const [isInitialQuery, setIsInitialQuery] = useState(true)
@@ -58,17 +56,16 @@ export function Summoner({route, region, store}: {route: any; region: string; st
 
   const filterParams = useMemo(() => {
     let params = route.match.params
-    let filters = matchFilters
     let data = {
       summoner_name: params.summoner_name || null,
       id: params.id || null,
       region: region,
       count: count,
-      queue: filters.queue_filter,
-      with_names: filters.summoner_filter !== undefined ? filters.summoner_filter.split(',') : '',
-      champion_key: filters.champion,
-      start_date: filters.start_date,
-      end_date: filters.end_date,
+      queue: matchFilters?.queue,
+      with_names: matchFilters?.summoners ? matchFilters.summoners.split(',') : '',
+      champion_key: matchFilters?.champion,
+      start_date: matchFilters?.startDate,
+      end_date: matchFilters?.endDate,
       page: page,
     }
     return data
@@ -98,7 +95,7 @@ export function Summoner({route, region, store}: {route: any; region: string; st
   const matches = pageQuery.data?.matches || []
 
   const refreshPage = useCallback(() => {
-    setMatchFilters({})
+    setMatchFilters(undefined)
     setPage(1)
   }, [setPage, setMatchFilters])
 
@@ -222,8 +219,6 @@ export function Summoner({route, region, store}: {route: any; region: string; st
                       summoner={summoner}
                       store={store}
                       spectateData={spectateQuery.data || {}}
-                      victory_color={victory_color}
-                      loss_color={loss_color}
                       isSpectateModalOpen={isSpectateModalOpen}
                       setIsSpectateModalOpen={setIsSpectateModalOpen}
                     />
@@ -253,6 +248,12 @@ export function Summoner({route, region, store}: {route: any; region: string; st
               <div className={`${custom_max_width}`}>
                 <div className="row">
                   <div className="col l6 m12">{/* match filters */}</div>
+                    <MatchFilterForm onUpdate={
+                      (data) => {
+                        setMatchFilters(data)
+                        setPage(1)
+                      }}
+                    />
                   <div className="col l6 m12">
                     <div
                       style={{
@@ -293,9 +294,6 @@ export function Summoner({route, region, store}: {route: any; region: string; st
                           region={region}
                           queues={queues}
                           summoner={summoner}
-                          victory_color={victory_color}
-                          loss_color={loss_color}
-                          neutral_color={neutral_color}
                         />
                       )
                     })}
@@ -326,8 +324,6 @@ function SummonerCard({
   store,
   refreshPage,
   lastRefresh,
-  victory_color,
-  loss_color,
   summoner,
   icon,
   isSpectateModalOpen,
@@ -339,8 +335,6 @@ function SummonerCard({
   store: any
   refreshPage: () => void
   lastRefresh?: number
-  victory_color: string
-  loss_color: string
   summoner: SummonerType
   icon: any
   isSpectateModalOpen: boolean
@@ -463,7 +457,7 @@ function SummonerCard({
             key={key}
             style={{
               ...shared_styles,
-              background: victory_color,
+              background: VICTORY_COLOR,
             }}
           ></div>
         )
@@ -473,7 +467,7 @@ function SummonerCard({
             key={key}
             style={{
               ...shared_styles,
-              background: loss_color,
+              background: LOSS_COLOR,
             }}
           ></div>
         )

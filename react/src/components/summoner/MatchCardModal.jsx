@@ -412,7 +412,7 @@ function MatchCardModal(props) {
                   <div style={{...comp_style, alignSelf: 'baseline'}}>
                     <h5 style={header_style}>Runes</h5>
                     <RunePage
-                      match_card_height={props.match_card_height}
+                      matchCardHeight={props.matchCardHeight}
                       mypart={mypart}
                       participants={participantQuery.data || []}
                       match={match}

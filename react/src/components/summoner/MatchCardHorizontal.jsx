@@ -6,7 +6,14 @@ import { ParticipantItems } from '../../constants/general';
 import { rankParticipants } from './rankparticipants'
 import { Comments } from '../comment/comments'
 import { useEffect } from 'react'
-import { getMyPart, formatDatetime, formatDatetimeFull } from '../../constants/general'
+import {
+  getMyPart,
+  formatDatetime,
+  formatDatetimeFull,
+  VICTORY_COLOR,
+  LOSS_COLOR,
+  NEUTRAL_COLOR,
+} from '../../constants/general'
 
 function formatName(name) {
     if (name.length > 9) {
@@ -95,11 +102,11 @@ function MatchCard(props) {
     }
     const topBarColor = () => {
         if (isVictory(match)) {
-            return props.victory_color
+            return VICTORY_COLOR
         } else if (isLoss(match)) {
-            return props.loss_color
+            return LOSS_COLOR
         } else {
-            return props.neutral_color
+            return NEUTRAL_COLOR
         }
     }
     const getKDA = (part) => {
@@ -536,9 +543,6 @@ MatchCard.propTypes = {
     queues: PropTypes.any,
     region: PropTypes.string,
     summoner: PropTypes.object,
-    victory_color: PropTypes.string,
-    loss_color: PropTypes.string,
-    neutral_color: PropTypes.string,
 }
 
 export default MatchCard
