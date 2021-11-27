@@ -309,6 +309,7 @@ export function Summoner({route, region, store}: {route: any; region: string; st
                     }}
                   >
                     <h5 style={{marginBottom: 3}}>Often Plays With</h5>
+                    <OftenPlaysWith region={region} summoner_id={summoner.id} />
                   </div>
                 )}
               </div>
