@@ -147,7 +147,7 @@ class RunePage extends Component {
   }
   render() {
     let match = this.props.match
-    var rune_stat_height = (this.props.pageStore.state.match_card_height - 20) / 6
+    var rune_stat_height = (this.props.match_card_height - 20) / 6
     return (
       <div>
         <div

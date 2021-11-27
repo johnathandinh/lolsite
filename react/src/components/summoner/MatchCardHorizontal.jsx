@@ -50,8 +50,7 @@ function MatchCard(props) {
     const theme = props.store.state.theme
     const match = props.match
     const store = props.store
-    const pageStore = props.pageStore
-    const puuid = props.pageStore.state.summoner.puuid
+    const puuid = props.summoner.puuid
 
     const getParticipantRanks = useCallback(() => {
         let participants = rankParticipants(match.participants)
@@ -96,11 +95,11 @@ function MatchCard(props) {
     }
     const topBarColor = () => {
         if (isVictory(match)) {
-            return props.pageStore.state.victory_color
+            return props.victory_color
         } else if (isLoss(match)) {
-            return props.pageStore.state.loss_color
+            return props.loss_color
         } else {
-            return props.pageStore.state.neutral_color
+            return props.neutral_color
         }
     }
     const getKDA = (part) => {
@@ -267,7 +266,7 @@ function MatchCard(props) {
                                                 target="_blank"
                                                 title={part.summoner_name}
                                                 className={`${theme} silent`}
-                                                to={`/${pageStore.props.region}/${part.summoner_name}/`}
+                                                to={`/${props.region}/${part.summoner_name}/`}
                                             >
                                                 {formatName(part.summoner_name)}
                                             </Link>
@@ -455,14 +454,14 @@ function MatchCard(props) {
                                 match.queue_id,
                             )}`}
                         >
-                            {pageStore.state.queues[match.queue_id] && (
+                            {props.queues[match.queue_id] && (
                                 <Fragment>
                                     {convertQueue(
-                                        pageStore.state.queues[match.queue_id].description,
+                                        props.queues[match.queue_id].description,
                                     )}
                                 </Fragment>
                             )}
-                            {pageStore.state.queues[match.queue_id] === undefined && (
+                            {props.queues[match.queue_id] === undefined && (
                                 <Fragment>{match.queue_id}</Fragment>
                             )}
                         </small>
@@ -532,6 +531,14 @@ MatchCard.propTypes = {
     mypart: PropTypes.object,
     store: PropTypes.object,
     pageStore: PropTypes.object,
+    index: PropTypes.number,
+    comment_count: PropTypes.number,
+    queues: PropTypes.any,
+    region: PropTypes.string,
+    summoner: PropTypes.object,
+    victory_color: PropTypes.string,
+    loss_color: PropTypes.string,
+    neutral_color: PropTypes.string,
 }
 
 export default MatchCard

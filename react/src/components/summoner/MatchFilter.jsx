@@ -135,18 +135,10 @@ class MatchFilter extends Component {
         return data
     }
     updateParent(callback) {
-        let parent_filters = this.props.parent.state.match_filters
+        let parent_filters = this.props.matchFilters
         let this_filters = this.getFilterParams()
         if (JSON.stringify(parent_filters) !== JSON.stringify(this_filters)) {
-            this.props.parent.setState({match_filters: this_filters}, () => {
-                if (callback !== undefined) {
-                    callback()
-                }
-            })
-        } else {
-            if (callback !== undefined) {
-                callback()
-            }
+            this.props.setMatchFilters(this_filters)
         }
     }
     apply() {
