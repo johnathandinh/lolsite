@@ -14,12 +14,17 @@ export interface MatchFilterFormType {
   endDate: string
   summoners: string
 }
-export function MatchFilterForm({onUpdate}: {onUpdate: (data: MatchFilterFormType) => void}) {
+export function MatchFilterForm({onUpdate}: {onUpdate: (data?: MatchFilterFormType) => void}) {
   const form = useForm<MatchFilterFormType>()
+  const watchQueue = form.watch('queue')
 
   const handleSubmit: SubmitHandler<MatchFilterFormType> = (data) => {
     onUpdate(data)
   }
+
+  useEffect(() => {
+    form.handleSubmit(handleSubmit)()
+  }, [watchQueue])
 
   useEffect(() => {
     window.$('select').formSelect()
@@ -27,10 +32,10 @@ export function MatchFilterForm({onUpdate}: {onUpdate: (data: MatchFilterFormTyp
 
   return (
     <>
-      <form onChange={() => form.handleSubmit(handleSubmit)()}>
+      <form>
         <div className="input-field dark">
           <select {...form.register('queue')}>
-            <option value=""></option>
+            <option value="">any</option>
             {queuefilter.map((item) => {
               return (
                 <>

@@ -97,7 +97,6 @@ export function Summoner({route, region, store}: {route: any; region: string; st
   const matches = pageQuery.data?.matches || []
 
   const refreshPage = useCallback(() => {
-    setMatchFilters(undefined)
     setPage(1)
   }, [setPage, setMatchFilters])
 
@@ -250,7 +249,6 @@ export function Summoner({route, region, store}: {route: any; region: string; st
               <div className={`${custom_max_width}`}>
                 <div className="row">
                   <div className="col l6 m12">
-                    {/* match filters */}
                     <MatchFilterForm
                       onUpdate={(data) => {
                         setMatchFilters(data)
@@ -265,7 +263,6 @@ export function Summoner({route, region, store}: {route: any; region: string; st
                         verticalAlign: 'top',
                       }}
                     >
-                      {/* recently played with */}
                       <RecentlyPlayedWith
                         region={region}
                         summoner={summoner}
