@@ -1,7 +1,6 @@
 import {useState, useMemo, useEffect, useCallback} from 'react'
 import {useQuery, useMutation, useQueryClient} from 'react-query'
 import Skeleton from '../general/Skeleton'
-import {Link} from 'react-router-dom'
 import ReactGA from 'react-ga'
 import Orbit from '../general/spinners/orbit'
 import MatchCard from './MatchCardHorizontal'
@@ -13,13 +12,13 @@ import numeral from 'numeral'
 import api from '../../api/api'
 import Modal from 'react-modal'
 import MatchCardModal from './MatchCardModal'
-import { MatchFilterForm } from './MatchFilterForm'
-import type { MatchFilterFormType } from './MatchFilterForm'
-import { VICTORY_COLOR, LOSS_COLOR } from '../../constants/general'
+import {MatchFilterForm} from './MatchFilterForm'
+import type {MatchFilterFormType} from './MatchFilterForm'
+import {VICTORY_COLOR, LOSS_COLOR} from '../../constants/general'
 import {OftenPlaysWith} from './OftenPlaysWith'
+import {RecentlyPlayedWith} from './RecentlyPlayedWith'
 
 import type {BasicMatchType, SummonerType} from '../../types'
-
 
 export let MODALSTYLE = {
   overlay: {
@@ -83,9 +82,12 @@ export function Summoner({route, region, store}: {route: any; region: string; st
         setLastRefresh(new Date().getTime())
         setIsInitialQuery(false)
         queryClient.prefetchQuery(
-          ['pageQuery', {...filterParams, page: filterParams.page+1}],
-          () => api.player.getSummonerPage({...filterParams, page: filterParams.page+1}).then(x => x.data),
-          {retry: false}
+          ['pageQuery', {...filterParams, page: filterParams.page + 1}],
+          () =>
+            api.player
+              .getSummonerPage({...filterParams, page: filterParams.page + 1})
+              .then((x) => x.data),
+          {retry: false},
         )
       },
     },
@@ -102,7 +104,7 @@ export function Summoner({route, region, store}: {route: any; region: string; st
   // refresh page if the summoner changes
   useEffect(() => {
     refreshPage()
-  }, [summoner?.simple_name])
+  }, [summoner?.simple_name, refreshPage])
 
   const spectateQuery = useQuery(
     ['spectate', region, summoner?._id],
@@ -247,13 +249,15 @@ export function Summoner({route, region, store}: {route: any; region: string; st
             <div className="row">
               <div className={`${custom_max_width}`}>
                 <div className="row">
-                  <div className="col l6 m12">{/* match filters */}</div>
-                    <MatchFilterForm onUpdate={
-                      (data) => {
+                  <div className="col l6 m12">
+                    {/* match filters */}
+                    <MatchFilterForm
+                      onUpdate={(data) => {
                         setMatchFilters(data)
                         setPage(1)
                       }}
                     />
+                  </div>
                   <div className="col l6 m12">
                     <div
                       style={{
@@ -262,6 +266,12 @@ export function Summoner({route, region, store}: {route: any; region: string; st
                       }}
                     >
                       {/* recently played with */}
+                      <RecentlyPlayedWith
+                        region={region}
+                        summoner={summoner}
+                        matches={matches || []}
+                        store={store}
+                      />
                     </div>
                   </div>
                 </div>
@@ -363,7 +373,7 @@ function SummonerCard({
     }
     return `${store.state.static}ranked-emblems/emblems/Emblem_${tier}.png`
   }
-  const refreshTimeQuery = useQuery(
+  useQuery(
     ['refreshTimeQuery'],
     () => {
       let now = new Date().getTime()
@@ -594,9 +604,7 @@ function SummonerCard({
               {lastRefresh !== null && <span>Last Refresh: </span>}
               <span style={{fontWeight: 'bold'}}>{timeDesc}</span>
             </small>
-            <button
-              onClick={() => refreshPage()}
-              className="dark btn-small">
+            <button onClick={() => refreshPage()} className="dark btn-small">
               <i className="material-icons">autorenew</i>
             </button>
           </span>
